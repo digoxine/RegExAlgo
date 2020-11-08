@@ -875,7 +875,29 @@ class RetenueAutomata{
 	}
 	
 	public void setRetenue(AutomataNodeD node, String retenue) {
-		 
+		 if(this.prefixe.length()==0 || retenue.length() == 0) {
+			 node.setRetenue(0);
+		 }
+		 else {
+			 int l = Integer.max(this.prefixe.length(), retenue.length());
+			 String newPrefixe = this.prefixe.substring(0, l);
+			 String oldretenue = retenue.substring(retenue.length()-l,retenue.length());
+			 while(!newPrefixe.equals(oldretenue)) {
+				 l=l-1;
+				 newPrefixe = newPrefixe.substring(0, l);
+				 oldretenue = oldretenue.substring(retenue.length()-l,retenue.length());
+			 }
+			 node.setRetenue(l+1);
+		 }
+		 if(node.getLinks().keySet().size()>1) {
+			 for(int a : node.getLinks().keySet()) {
+				 setRetenue(node.getLink(a),""+((char)a));
+			 }
+		 } else if(node.getLinks().keySet().size()==1) {
+			 for(int a : node.getLinks().keySet()) {
+				 setRetenue(node.getLink(a),retenue+((char)a));
+			 }
+		 }
 	}
 	
 }
