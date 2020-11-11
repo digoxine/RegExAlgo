@@ -1,6 +1,3 @@
-import utils.RegExStringGenerator;
-
-import java.io.*;
 import java.util.Scanner;
 
 import javax.lang.model.util.ElementScanner6;
@@ -11,10 +8,13 @@ import java.util.Map;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.awt.List;
 import java.lang.Exception;
-
-import java.util.Scanner;
+import java.io.BufferedWriter;
+import java.io.File;  
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import utils.RegExStringGenerator;
 
 public class RegEx {
   //MACROS
@@ -47,61 +47,102 @@ public class RegEx {
 		  
   //MAIN
   public static void main(String arg[]) {
-      if(arg.length < 2)
-      {
-          System.err.println("You must give the arguments resultFile, searchText");
+     Scanner scanner = new Scanner(System.in);
+	  
+	 String filename = "text.txt"; 
+    System.out.println("Welcome to Bogota, Mr. Thomas Anderson.");
+    if (arg.length!=0) {
+      regEx = arg[0];
+    } else {
+      System.out.print("  >> Please enter a regEx: ");
+      regEx = scanner.next();
+      System.out.print("  >> Please enter a file to read (by default it will be text.txt): ");
+      filename = scanner.next();
+      if(filename=="") {
+    	  filename = "text.txt";
       }
-      File textFile = new File(arg[1]);
-      if(!textFile.exists() || textFile.isDirectory())
-          System.err.println("Second argument must be an existing file");
-
-      long start_search, end_search;
-      PrintWriter out = null;
-
+    }
+    System.out.println("  >> Parsing regEx \""+regEx+"\".");
+    System.out.println("  >> ...");
+    
+    if (regEx.length()<1) {
+      System.err.println("  >> ERROR: empty regEx.");
+    } else {
+      System.out.print("  >> ASCII codes: ["+(int)regEx.charAt(0));
+      for (int i=1;i<regEx.length();i++) System.out.print(","+(int)regEx.charAt(i));
+      System.out.println("].");
       try {
-          out = new PrintWriter(
-                  new BufferedWriter(
-                          new FileWriter(arg[0], true)
-                  )
-          );
-          for (int lgRegEx = 6; lgRegEx < 23; lgRegEx++) {
-              regEx = RegExStringGenerator.generateRegEx(lgRegEx);
-              if (regEx.length() < 1) {
-                  System.err.println("  >> ERROR: empty regEx.");
-              } else {
-                  System.out.print("  >> ASCII codes: [" + (int) regEx.charAt(0));
-                  for (int i = 1; i < regEx.length(); i++) System.out.print("," + (int) regEx.charAt(i));
-                  System.out.println("].");
-                  try {
-                      start_search = System.currentTimeMillis();
-                      RegExTree ret = parse();
-                      Automata a = new Automata(ret);
-                      a.toStringTab();
-
-                      String filename = "resources/text.txt";
-
-                      System.out.println("On a " + (new RechercheAutomata(ret, arg[1])).getNombre() + " apparations.");
-                      end_search = System.currentTimeMillis();
-                      out.println(regEx + " " + lgRegEx + " " + (end_search - start_search));
-                      System.out.println("  >> Tree result: " + ret.toString() + ".");
-                      System.out.println(end_search - start_search);
-                  } catch (Exception e) {
-                      System.err.println("  >> ERROR: syntax error for regEx \"" + regEx + "  cause = " + e.toString() + "\".");
-                      e.printStackTrace();
-                  }
-              }
-          }
-      } catch (Exception e)
-      {
-          System.err.println("Error during opening of result file");
+    	long t1 = System.currentTimeMillis();
+        RegExTree ret = parse();
+        Automata a = new Automata(ret);
+        long t2 = System.currentTimeMillis();
+        RechercheAutomata recaut = new RechercheAutomata(a,filename);
+        long t3 = System.currentTimeMillis();
+        
+        
+        System.out.println("On a "+recaut.getNombre()+" apparations du regex "+regEx + " dans le texte "+filename+".");
+        
+        System.out.println("Les occurences sont presentes aux lignes:\n"+recaut.getLines());
+        
+        System.out.println("La construction de l'automate a pris "+(t2-t1)+"ms la recherche au sein du texte elle "+(t3-t2)+"ms.");
+        
+        System.out.println("  >> Tree result: "+ret.toString()+".");
+      } catch (Exception e) {
+        System.err.println("  >> ERROR: syntax error for regEx \""+regEx+"  cause = "+e.toString()+"\".");
+        e.printStackTrace();
       }
-      finally {
-          if( out != null)
-              out.close();
-      }
+    }
+    
+
     System.out.println("  >> ...");
     System.out.println("  >> Parsing completed.");
     System.out.println("Goodbye Mr. Anderson.");
+    
+    System.out.print("  >> Please enter a file in wich results will be printed: ");
+    String resultfile = scanner.next();
+    
+    long start_search, end_search;
+	PrintWriter out = null;
+    try {
+        out = new PrintWriter(
+                new BufferedWriter(
+                        new FileWriter(resultfile, true)
+                )
+        );
+        for (int lgRegEx = 6; lgRegEx < 10; lgRegEx++) {
+            regEx = RegExStringGenerator.generateRegEx(lgRegEx);
+            if (regEx.length() < 1) {
+                System.err.println("  >> ERROR: empty regEx.");
+            } else {
+            	out.print("RegEx = "+regEx+".\n");
+                out.print("  >> ASCII codes: [" + (int) regEx.charAt(0));
+                for (int i = 1; i < regEx.length(); i++) out.print("," + (int) regEx.charAt(i));
+                out.println("].");
+                try {
+                    start_search = System.currentTimeMillis();
+                    RegExTree ret = parse();
+                    Automata a = new Automata(ret);
+                    out.print("On a " + (new RechercheAutomata(a, filename)).getNombre() + " apparations.\n");
+                    end_search = System.currentTimeMillis();
+                    out.print(regEx + " " + lgRegEx + " " + (end_search - start_search)+"\n");
+                    out.print("  >> Tree result: " + ret.toString() + ".\n");
+                    out.print((end_search - start_search)+"\n");
+                } catch (Exception e) {
+                    System.err.println("  >> ERROR: syntax error for regEx \"" + regEx + "  cause = " + e.toString() + "\".");
+                    e.printStackTrace();
+                }
+            }
+        }
+    } catch (Exception e)
+    {
+        System.err.println("Error during opening of result file");
+    }
+    finally {
+        if( out != null)
+            out.close();
+    }
+  System.out.println("  >> ...");
+  System.out.println("  >> Testing completed. \n Results are available in the file : "+resultfile+".\n");
   }
 
   //FROM REGEX TO SYNTAX TREE
@@ -289,7 +330,6 @@ class RegExTree {
   public String toString() {
     if (subTrees.isEmpty()) return rootToString();
     String result = rootToString()+"("+subTrees.get(0).toString();
-    System.out.println("size == "+subTrees.size());
     for (int i=1;i<subTrees.size();i++) result+=","+subTrees.get(i).toString();
     for(int i=1; i<subTrees.size();i++) result+="";
     return result+")";
@@ -364,7 +404,7 @@ class AutomataNodeD{
 	public ArrayList<AutomataNodeD> ancetres; //repertorie les noeuds ancetres a celui ci
 	public ArrayList<AutomataNodeND> courant; //repertorie les etats du noeud courant
 	public Map<Integer,AutomataNodeD> liens;
-	public boolean acceptance; //determine si le noeud est celui d'acceptation de l'automate
+	public boolean acceptance; //determine si le noeud est un noeud d'acceptation de l'automate
 	public boolean recursif; //determine si le noeud est recursif
 	public boolean redirect; // determine si un noeud redirigie vers un autre
 	public AutomataNodeD redirection; 
@@ -548,7 +588,7 @@ class Automata
     		toAutomata(tree.getSubTrees().get(0),start_node,node1);
     		toAutomata(tree.getSubTrees().get(1),node2,final_node);
     	}
-        if (tree.getRoot()==RegEx.ETOILE) {
+    	else if (tree.getRoot()==RegEx.ETOILE) {
     		
         	AutomataNodeND node1 = new AutomataNodeND(id_node);
     		id_node++;
@@ -562,7 +602,7 @@ class Automata
     		start_node.addTransition(ID_EPSILON_TRANSITION, final_node);
     		toAutomata(tree.getSubTrees().get(0),node1,node2);
         }
-        if (tree.getRoot()==RegEx.ALTERN) {
+    	else if (tree.getRoot()==RegEx.ALTERN) {
         	
         	AutomataNodeND node1 = new AutomataNodeND(id_node);
     		id_node++;
@@ -586,7 +626,7 @@ class Automata
         }
         
     	//Cas où il s'agit d'une feuille
-    	if(tree.getSubTrees().isEmpty()) {
+    	else if(tree.getSubTrees().isEmpty()) {
     		start_node.addTransition(tree.getRoot(),final_node);
     		if(!this.transitions_c.contains(tree.getRoot()))
     			this.transitions_c.add(tree.getRoot());
@@ -928,66 +968,72 @@ class RetenueAutomata{
 //Effectuie une recherche a partir d'un automate
 class RechercheAutomata{
 	public AutomataNodeD automata;
-	public String text;
 	public int nombre;
 	public int pref;
-	public ArrayList<Integer> apparaitions;
+	public ArrayList<String> apparaitions;
 	
-	public RechercheAutomata(RegExTree tree, String filename) {
-		this.automata = (new Automata(tree)).getRacine();
-		RetenueAutomata ret = (new RetenueAutomata(automata));
-		ReadFile(filename);
-		this.apparaitions = new ArrayList<Integer>();
+	public RechercheAutomata(Automata automata, String filename) {
+		this.automata = automata.getRacine();
+		RetenueAutomata ret = (new RetenueAutomata(this.automata));
+		this.apparaitions = new ArrayList<String>();
 		this.pref = ret.getPrefixe().length();
-		Rechercher();
+		Rechercher(filename);
 	}
 	
-	private void Rechercher() {
-		int indice;
+	private void Rechercher(String filename) {
 		AutomataNodeD courant;
 		int i;
-		for(indice=0;indice<text.length();indice++) {
-			courant = this.automata;
-			i=0;
-			while(!courant.isAcceptance()){
-				if(!courant.getLinks().containsKey((int)text.charAt(i+indice))) {
-					indice += courant.getRetenue()-1;
-					break;
+		int t = 0;
+		String line = "";
+		try {
+		      File myObj = new File(filename);
+		      Scanner myReader = new Scanner(myObj);
+			while(myReader.hasNextLine()) {
+				if(t>=line.length()) {
+					line = myReader.nextLine();
+					t=0;
 				}
-				courant = courant.getLink((int)text.charAt(i+indice));
-				i++;
+				courant = this.automata;
+				i=0;
+				while(!courant.isAcceptance()){
+					
+					if(((t+i)==line.length())||(!courant.getLinks().containsKey((int)line.charAt(i+t)))) {
+						t += courant.getRetenue()-1;
+						break;
+					}
+					courant = courant.getLink((int)line.charAt(i+t));
+					i++;
+				}
+				if(courant.isAcceptance()) {
+					nombre++;
+					apparaitions.add(line);
+				}
+				t++;
 			}
-			if(courant.isAcceptance()) {
-				nombre++;
-				apparaitions.add(indice);
-			}
+		  myReader.close();
+	    } catch (FileNotFoundException e) {
+	      System.out.println("An error occurred.");
+	      e.printStackTrace();
+	    }
+	}
+	
+	public String getLines() {
+		String lines = "";
+		for(String chaine : this.apparaitions) {
+			lines += chaine+"\n";
 		}
+		return lines;
 	}
 
 	public int getNombre() {
 		return this.nombre;
 	}
 	
-	public ArrayList<Integer> getApparations(){
+	public ArrayList<String> getApparations(){
 		return this.apparaitions;
 	}
 	
 
-	public void ReadFile(String filename) {
-	    try {
-	      File myObj = new File(filename);
-	      Scanner myReader = new Scanner(myObj);
-	      while (myReader.hasNextLine()) {
-	        String data = myReader.nextLine();
-	        this.text += data+"\n";
-	      }
-	      myReader.close();
-	    } catch (FileNotFoundException e) {
-	      System.out.println("An error occurred.");
-	      e.printStackTrace();
-	    }
-	  }
-	
 }
 
 class Recherche{
@@ -1033,6 +1079,7 @@ class Recherche{
 			}
 		}
 	}
+	
 
 	public void ReadFile(String filename) {
 	    try {
@@ -1040,7 +1087,7 @@ class Recherche{
 	      Scanner myReader = new Scanner(myObj);
 	      while (myReader.hasNextLine()) {
 	        String data = myReader.nextLine();
-	        this.text += data+"\n";
+	        this.text += data+'\n';
 	      }
 	      myReader.close();
 	    } catch (FileNotFoundException e) {
