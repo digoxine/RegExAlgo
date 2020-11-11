@@ -31,16 +31,16 @@ public class RegExStringGenerator {
                     ret.append((char)'(');
                     availableNbCharacters -= 3;
 
-                    System.out.println("available nb characters before add of parenthesis: " + availableNbCharacters);
+                    //System.out.println("available nb characters before add of parenthesis: " + availableNbCharacters);
                     String insideParenthesis = generateRegExInsideParenthesis(ThreadLocalRandom.current().nextInt(1, availableNbCharacters+1));
                     availableNbCharacters -= insideParenthesis.length();
                     ret.append(insideParenthesis);
                     ret.append((char)')');
                     ret.append((char)'*');
-                    System.out.println("available nb characters after : " + availableNbCharacters);
+                    //System.out.println("available nb characters after : " + availableNbCharacters);
                 }
                 else {
-                    System.out.println("inside else");
+                    //System.out.println("inside else");
                     for (int i=0;i<availableNbCharacters; i++) {
                         ret.append((char) ThreadLocalRandom.current().nextInt(FIRST_CHARACTER_ASCII, FINAL_CHARACTER_ASCII));
                         availableNbCharacters -- ;
@@ -69,7 +69,7 @@ public class RegExStringGenerator {
         }
         int randInt = ThreadLocalRandom.current().nextInt(1,availableLength+1);
 
-        System.out.println("my length inside parenthesis"+randInt);
+        //System.out.println("my length inside parenthesis"+randInt);
 
 
         if (randInt == 1) {
