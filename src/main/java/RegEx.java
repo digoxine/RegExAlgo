@@ -100,7 +100,7 @@ public class RegEx {
                             new FileWriter(resultfile, true)
                     )
             );
-            for (int lgRegEx = 5; lgRegEx < 30; lgRegEx++) {
+            for (int lgRegEx = 5; lgRegEx < 15; lgRegEx++) {
                 regEx = RegExStringGenerator.generateRegEx(lgRegEx);
                 if (regEx.length() < 1) {
                     System.err.println("  >> ERROR: empty regEx.");
