@@ -44,105 +44,109 @@ public class RegEx {
 		 
 		 return "["+schaine+"]";
 		}
-		  
-  //MAIN
-  public static void main(String arg[]) {
-     Scanner scanner = new Scanner(System.in);
-	  
-	 String filename = "text.txt"; 
-    System.out.println("Welcome to Bogota, Mr. Thomas Anderson.");
-    if (arg.length!=0) {
-      regEx = arg[0];
-    } else {
-      System.out.print("  >> Please enter a regEx: ");
-      regEx = scanner.next();
-      System.out.print("  >> Please enter a file to read (by default it will be text.txt): ");
-      filename = scanner.next();
-      if(filename=="") {
-    	  filename = "resources/text.txt";
-      }
-    }
-    System.out.println("  >> Parsing regEx \""+regEx+"\".");
-    System.out.println("  >> ...");
-    
-    if (regEx.length()<1) {
-      System.err.println("  >> ERROR: empty regEx.");
-    } else {
-      System.out.print("  >> ASCII codes: ["+(int)regEx.charAt(0));
-      for (int i=1;i<regEx.length();i++) System.out.print(","+(int)regEx.charAt(i));
-      System.out.println("].");
-      try {
-    	long t1 = System.currentTimeMillis();
-        RegExTree ret = parse();
-        Automata a = new Automata(ret);
-        long t2 = System.currentTimeMillis();
-        RechercheAutomata recaut = new RechercheAutomata(a,filename);
-        long t3 = System.currentTimeMillis();
-        
-        
-        System.out.println("On a "+recaut.getNombre()+" apparations du regex "+regEx + " dans le texte "+filename+".");
-        
-        System.out.println("Les occurences sont presentes aux lignes:\n"+recaut.getLines());
-        
-        System.out.println("La construction de l'automate a pris "+(t2-t1)+"ms la recherche au sein du texte elle "+(t3-t2)+"ms.");
-        
-        System.out.println("  >> Tree result: "+ret.toString()+".");
-      } catch (Exception e) {
-        System.err.println("  >> ERROR: syntax error for regEx \""+regEx+"  cause = "+e.toString()+"\".");
-        e.printStackTrace();
-      }
-    }
-    
 
-    
-    System.out.print("  >> Please enter a file in which results will be printed: ");
-    String resultfile = scanner.next();
-    
-    long start_search, end_search;
-	PrintWriter out = null;
-    try {
-        out = new PrintWriter(
-                new BufferedWriter(
-                        new FileWriter(resultfile, true)
-                )
-        );
-        for (int lgRegEx = 5; lgRegEx < 30; lgRegEx++) {
-            regEx = RegExStringGenerator.generateRegEx(lgRegEx);
-            if (regEx.length() < 1) {
-                System.err.println("  >> ERROR: empty regEx.");
-            } else {
+    /**
+     * Test one regex and one text file
+     */
+    public static void testRegExUser() throws Exception
+    {
+        Scanner scanner = new Scanner(System.in);
+        String filename;
+        System.out.print("  >> Please enter a regEx: ");
+        regEx = scanner.next();
+        System.out.print("  >> Please enter a file to read (by default it will be text.txt): ");
+        filename = scanner.next();
+        if(filename=="") {
+            filename = "resources/text.txt";
+        }
+        System.out.println("  >> Parsing regEx \""+regEx+"\".");
+        System.out.println("  >> ...");
+        if(regEx.length()<1) {
+            System.err.println(" >> Error: empty regEx.");
+        } else {
+            System.out.print("  >> ASCII codes: ["+(int)regEx.charAt(0));
+            for (int i=1;i<regEx.length();i++) System.out.print(","+(int)regEx.charAt(i));
+            System.out.println("].");
+            long t1 = System.currentTimeMillis();
+            RegExTree ret = parse();
+            Automata a = new Automata(ret);
+            long t2 = System.currentTimeMillis();
+            RechercheAutomata recaut = new RechercheAutomata(a,filename);
+            long t3 = System.currentTimeMillis();
+            System.out.println("On a "+recaut.getNombre()+" apparations du regex "+regEx + " dans le texte "+filename+".");
 
-                try {
+            System.out.println("Les occurences sont presentes aux lignes:\n"+recaut.getLines());
+
+            System.out.println("La construction de l'automate a pris "+(t2-t1)+"ms la recherche au sein du texte elle "+(t3-t2)+"ms.");
+
+            System.out.println("  >> Tree result: "+ret.toString()+".");
+        }
+    }
+
+    public static void testRegExAuto() throws Exception
+    {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("  >> Please enter a file in which results will be printed: ");
+        String resultfile = scanner.next();
+
+        String filename;
+        long start_search, end_search;
+        for(int k=1000; k < 1000000; k+=1000) {//create file of random string
+            filename = "resources/generated_texts/text_generated_" + k + ".txt";
+            RegExStringGenerator.generateFileText(k, filename);//creating file with random letters good distrib
+            PrintWriter out = new PrintWriter(
+                    new BufferedWriter(
+                            new FileWriter(resultfile, true)
+                    )
+            );
+            for (int lgRegEx = 5; lgRegEx < 30; lgRegEx++) {
+                regEx = RegExStringGenerator.generateRegEx(lgRegEx);
+                if (regEx.length() < 1) {
+                    System.err.println("  >> ERROR: empty regEx.");
+                } else {
                     System.out.println(lgRegEx);
                     System.out.println(regEx);
+                    System.out.println(k);
                     start_search = System.currentTimeMillis();
                     RegExTree ret = parse();
                     Automata a = new Automata(ret);
-                    new RechercheAutomata(a,filename);
-                    //out.println("On a " + (new RechercheAutomata(a, filename)).getNombre() + " apparations.\n");
+                    new RechercheAutomata(a, filename);
                     end_search = System.currentTimeMillis();
-                    out.println(regEx + " " + lgRegEx + " " + (end_search - start_search));
-                    //out.print("  >> Tree result: " + ret.toString() + ".\n");
-                    //out.println((end_search - start_search)+"\n");
-                } catch (Exception e) {
-                    System.err.println("  >> ERROR: syntax error for regEx \"" + regEx + "  cause = " + e.toString() + "\".");
-                    e.printStackTrace();
+                    out.println(k + " " + regEx + " " + lgRegEx + " " + (end_search - start_search));
+
                 }
             }
         }
-    } catch (Exception e)
-    {
-        System.err.println("Error during opening of result file");
+        System.out.println("  >> ...");
+        System.out.println("  >> Parsing completed.");
+        System.out.println("Goodbye Mr. Anderson.");
+        System.out.println("  >> ...");
+        System.out.println("  >> Testing completed. \n Results are available in the file : "+resultfile+".\n");
     }
-    finally {
-        if( out != null)
-            out.close();
-    }
-    System.out.println("  >> ...");
-    System.out.println("  >> Parsing completed.");
-    System.out.println("Goodbye Mr. Anderson.");
-  System.out.println("  >> ...");
-  System.out.println("  >> Testing completed. \n Results are available in the file : "+resultfile+".\n");
+
+  //MAIN
+  public static void main(String arg[])  {
+        if(arg.length == 1 && (arg[0].equals("0") || arg[0].equals("1")) ) {
+            try {
+                if (arg[0].equals("0"))
+                    testRegExUser();
+                if (arg[0].equals("1"))
+                    testRegExAuto();
+            } catch (Exception e) {
+                System.err.println("Error during testRegEx function");
+            }
+        }
+        else{
+            System.out.println(arg[0]);
+            System.err.println("Please enter the mode you want to use" +
+                    "\n 0 is for one regex submitted by User and one text submitted by user\n" +
+                    "1 is for auto create new file and create new regex ");
+
+        }
+
+
+
   }
 
   //FROM REGEX TO SYNTAX TREE
