@@ -59,7 +59,7 @@ public class RegEx {
       System.out.print("  >> Please enter a file to read (by default it will be text.txt): ");
       filename = scanner.next();
       if(filename=="") {
-    	  filename = "text.txt";
+    	  filename = "resources/text.txt";
       }
     }
     System.out.println("  >> Parsing regEx \""+regEx+"\".");
@@ -94,11 +94,8 @@ public class RegEx {
     }
     
 
-    System.out.println("  >> ...");
-    System.out.println("  >> Parsing completed.");
-    System.out.println("Goodbye Mr. Anderson.");
     
-    System.out.print("  >> Please enter a file in wich results will be printed: ");
+    System.out.print("  >> Please enter a file in which results will be printed: ");
     String resultfile = scanner.next();
     
     long start_search, end_search;
@@ -109,24 +106,24 @@ public class RegEx {
                         new FileWriter(resultfile, true)
                 )
         );
-        for (int lgRegEx = 6; lgRegEx < 10; lgRegEx++) {
+        for (int lgRegEx = 5; lgRegEx < 30; lgRegEx++) {
             regEx = RegExStringGenerator.generateRegEx(lgRegEx);
             if (regEx.length() < 1) {
                 System.err.println("  >> ERROR: empty regEx.");
             } else {
-            	out.print("RegEx = "+regEx+".\n");
-                out.print("  >> ASCII codes: [" + (int) regEx.charAt(0));
-                for (int i = 1; i < regEx.length(); i++) out.print("," + (int) regEx.charAt(i));
-                out.println("].");
+
                 try {
+                    System.out.println(lgRegEx);
+                    System.out.println(regEx);
                     start_search = System.currentTimeMillis();
                     RegExTree ret = parse();
                     Automata a = new Automata(ret);
-                    out.print("On a " + (new RechercheAutomata(a, filename)).getNombre() + " apparations.\n");
+                    new RechercheAutomata(a,filename);
+                    //out.println("On a " + (new RechercheAutomata(a, filename)).getNombre() + " apparations.\n");
                     end_search = System.currentTimeMillis();
-                    out.print(regEx + " " + lgRegEx + " " + (end_search - start_search)+"\n");
-                    out.print("  >> Tree result: " + ret.toString() + ".\n");
-                    out.print((end_search - start_search)+"\n");
+                    out.println(regEx + " " + lgRegEx + " " + (end_search - start_search));
+                    //out.print("  >> Tree result: " + ret.toString() + ".\n");
+                    //out.println((end_search - start_search)+"\n");
                 } catch (Exception e) {
                     System.err.println("  >> ERROR: syntax error for regEx \"" + regEx + "  cause = " + e.toString() + "\".");
                     e.printStackTrace();
@@ -141,6 +138,9 @@ public class RegEx {
         if( out != null)
             out.close();
     }
+    System.out.println("  >> ...");
+    System.out.println("  >> Parsing completed.");
+    System.out.println("Goodbye Mr. Anderson.");
   System.out.println("  >> ...");
   System.out.println("  >> Testing completed. \n Results are available in the file : "+resultfile+".\n");
   }
@@ -766,7 +766,8 @@ class Automata
 			merger();
 		}
 	}
-	
+
+
 	//Fonction cherchant dans le tableau des etats les etats analogues et les fusionne
 	public void merger(){
 		int i,n;
@@ -965,7 +966,7 @@ class RetenueAutomata{
 	
 }
 
-//Effectuie une recherche a partir d'un automate
+//Effectue une recherche a partir d'un automate
 class RechercheAutomata{
 	public AutomataNodeD automata;
 	public int nombre;

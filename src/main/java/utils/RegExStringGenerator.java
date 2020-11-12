@@ -1,13 +1,28 @@
 package utils;
 
+import java.util.NavigableMap;
 import java.util.Random;
+import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static java.lang.Integer.min;
 
 
 public class RegExStringGenerator {
 
     public static final int FIRST_CHARACTER_ASCII = 97; // the a
     public static final int FINAL_CHARACTER_ASCII = 122;
+    public static final int LENGTH_INSIDE_PARENTHESIS_MAX = 5;
+    public static char[] options = new char[]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+            'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+            't','u','v','w','x','y','z'};
+    public static double[] weights = new double[]{
+            0.082, 0.015, 0.028, 0.043, 0.13, 0.022, 0.02, 0.061, 0.07, 0.0015, 0.0077, 0.04, 0.024, 0.067,
+            0.075, 0.019, 0.0095, 0.06, 0.063, 0.091, 0.028, 0.0098, 0.024, 0.00015, 0.02, 0.00074
+    };
+    public static Random rand = new Random();
+    public static NavigableMap<Double, Character> map = new TreeMap<Double, Character>();
+    public static double totalWeight=0d;
 
     /**
      *
@@ -15,13 +30,24 @@ public class RegExStringGenerator {
      * @return                   a regex of length in range [sizeMin, sizeMax]
      */
     public static String generateRegEx(int sizeRegEx) {
+
+
+
+        for (int i=0; i<weights.length; i++) {
+            totalWeight += weights[i];
+            map.put(totalWeight, options[i]);
+        }
+
+
         int availableNbCharacters = sizeRegEx;
         StringBuffer ret = new StringBuffer();
         while(availableNbCharacters > 0)
         {
             if( availableNbCharacters == 1)
             {
-                ret.append((char)ThreadLocalRandom.current().nextInt(FIRST_CHARACTER_ASCII, FINAL_CHARACTER_ASCII));
+                double rnd = rand.nextDouble() * totalWeight;
+                ret.append(map.ceilingEntry(rnd).getValue());
+                //ret.append((char)ThreadLocalRandom.current().nextInt(FIRST_CHARACTER_ASCII, FINAL_CHARACTER_ASCII));
                 availableNbCharacters -= 1;
             }
             else
@@ -32,7 +58,7 @@ public class RegExStringGenerator {
                     availableNbCharacters -= 3;
 
                     //System.out.println("available nb characters before add of parenthesis: " + availableNbCharacters);
-                    String insideParenthesis = generateRegExInsideParenthesis(ThreadLocalRandom.current().nextInt(1, availableNbCharacters+1));
+                    String insideParenthesis = generateRegExInsideParenthesis(ThreadLocalRandom.current().nextInt(1, min(LENGTH_INSIDE_PARENTHESIS_MAX,availableNbCharacters+1)));
                     availableNbCharacters -= insideParenthesis.length();
                     ret.append(insideParenthesis);
                     ret.append((char)')');
@@ -75,17 +101,21 @@ public class RegExStringGenerator {
         if (randInt == 1) {
             // Generating only one character
             // Finding an ascii character
-            ascii = ThreadLocalRandom.current().nextInt(FIRST_CHARACTER_ASCII, FINAL_CHARACTER_ASCII);
-            ret.append((char) ascii);
+            //ascii = ThreadLocalRandom.current().nextInt(FIRST_CHARACTER_ASCII, FINAL_CHARACTER_ASCII);
+            //ret.append((char) ascii);
+            double rnd = rand.nextDouble() * totalWeight;
+            ret.append(map.ceilingEntry(rnd).getValue());
             return ret.toString();
          }
         ret.append((char) ThreadLocalRandom.current().nextInt(FIRST_CHARACTER_ASCII, FINAL_CHARACTER_ASCII));
         while (sizeUsed < randInt)
         {
-            ascii = ThreadLocalRandom.current().nextInt(FIRST_CHARACTER_ASCII, FINAL_CHARACTER_ASCII);
+            //ascii = ThreadLocalRandom.current().nextInt(FIRST_CHARACTER_ASCII, FINAL_CHARACTER_ASCII);
             sizeUsed ++;
             ret.append((char) '|');
-            ret.append((char) ascii);
+            double rnd = rand.nextDouble() * totalWeight;
+            ret.append(map.ceilingEntry(rnd).getValue());
+            //ret.append((char) ascii);
         }
 
         return ret.toString();
