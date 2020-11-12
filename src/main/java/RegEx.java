@@ -932,8 +932,10 @@ class RetenueAutomata{
 		int k;
 		if(node.getLinks().keySet().size()==1) {
 			k = (int) node.getLinks().keySet().toArray()[0];
-			this.prefixe += ((char)k);
-			setPrefixe(node.getLink(k));
+			if(node.getLink(k)!=node){
+				this.prefixe += ((char)k);
+				setPrefixe(node.getLink(k));
+			}
 		}
 	}
 	
