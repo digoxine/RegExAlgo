@@ -92,7 +92,7 @@ public class RegEx {
 
         String filename;
         long start_search, end_search;
-        for(int k=1000; k < 1000000; k+=1000) {//create file of random string
+        for(int k=10000; k < 10000000; k+=10000) {//create file of random string
             filename = "resources/generated_texts/text_generated_" + k + ".txt";
             RegExStringGenerator.generateFileText(k, filename);//creating file with random letters good distrib
             PrintWriter out = new PrintWriter(
@@ -100,7 +100,7 @@ public class RegEx {
                             new FileWriter(resultfile, true)
                     )
             );
-            for (int lgRegEx = 5; lgRegEx < 15; lgRegEx++) {
+            for (int lgRegEx = 5; lgRegEx < 6; lgRegEx++) {
                 regEx = RegExStringGenerator.generateRegEx(lgRegEx);
                 if (regEx.length() < 1) {
                     System.err.println("  >> ERROR: empty regEx.");
@@ -117,7 +117,9 @@ public class RegEx {
 
                 }
             }
+            out.close();
         }
+
         System.out.println("  >> ...");
         System.out.println("  >> Parsing completed.");
         System.out.println("Goodbye Mr. Anderson.");
