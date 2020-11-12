@@ -988,7 +988,7 @@ class RechercheAutomata{
 		try {
 		      File myObj = new File(filename);
 		      Scanner myReader = new Scanner(myObj);
-			while(myReader.hasNextLine()) {
+			while(myReader.hasNextLine() || t<line.length()) {
 				if(t>=line.length()) {
 					line = myReader.nextLine();
 					t=0;
