@@ -1045,6 +1045,76 @@ class RechercheAutomata{
 
 }
 
+//Effectue une recherche a partir d'un automate sans retenue
+class RechercheAutomataSansRetenue{
+	public AutomataNodeD automata;
+	public int nombre;
+	public int pref;
+	public ArrayList<String> apparaitions;
+	
+	public RechercheAutomata(Automata automata, String filename) {
+		this.automata = automata.getRacine();
+		RetenueAutomata ret = (new RetenueAutomata(this.automata));
+		this.apparaitions = new ArrayList<String>();
+		this.pref = ret.getPrefixe().length();
+		Rechercher(filename);
+	}
+	
+	private void Rechercher(String filename) {
+		AutomataNodeD courant;
+		int i;
+		int t = 0;
+		String line = "";
+		try {
+		      File myObj = new File(filename);
+		      Scanner myReader = new Scanner(myObj);
+			while(myReader.hasNextLine() || t<line.length()) {
+				if(t>=line.length()) {
+					line = myReader.nextLine();
+					t=0;
+				}
+				courant = this.automata;
+				i=0;
+				while(!courant.isAcceptance()){
+					
+					if(((t+i)==line.length())||(!courant.getLinks().containsKey((int)line.charAt(i+t)))) {
+						break;
+					}
+					courant = courant.getLink((int)line.charAt(i+t));
+					i++;
+				}
+				if(courant.isAcceptance()) {
+					nombre++;
+					apparaitions.add(line);
+				}
+				t++;
+			}
+		  myReader.close();
+	    } catch (FileNotFoundException e) {
+	      System.out.println("An error occurred.");
+	      e.printStackTrace();
+	    }
+	}
+	
+	public String getLines() {
+		String lines = "";
+		for(String chaine : this.apparaitions) {
+			lines += chaine+"\n";
+		}
+		return lines;
+	}
+
+	public int getNombre() {
+		return this.nombre;
+	}
+	
+	public ArrayList<String> getApparations(){
+		return this.apparaitions;
+	}
+	
+
+}
+
 class Recherche{
 	public String text;
 	public int[] retenue;
