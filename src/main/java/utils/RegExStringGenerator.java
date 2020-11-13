@@ -56,15 +56,19 @@ public class RegExStringGenerator {
             {
                 if (availableNbCharacters > 3)
                 { // It is possible to use a parenthesis. Min parenthesis reg ex is '(' 'CHAR' ')' '+|*'
-                    ret.append((char)'(');
+                	double x = Math.random()*10;
+                	if(x>7)
+                		ret.append((char)'(');
                     availableNbCharacters -= 3;
 
                     //System.out.println("available nb characters before add of parenthesis: " + availableNbCharacters);
                     String insideParenthesis = generateRegExInsideParenthesis(ThreadLocalRandom.current().nextInt(1, min(LENGTH_INSIDE_PARENTHESIS_MAX,availableNbCharacters+1)));
                     availableNbCharacters -= insideParenthesis.length();
                     ret.append(insideParenthesis);
-                    ret.append((char)')');
-                    ret.append((char)'*');
+                    if(x>7){
+                    	ret.append((char)')');
+                    	ret.append((char)'*');
+                    }
                     //System.out.println("available nb characters after : " + availableNbCharacters);
                 }
                 else {
@@ -116,7 +120,9 @@ public class RegExStringGenerator {
         {
             //ascii = ThreadLocalRandom.current().nextInt(FIRST_CHARACTER_ASCII, FINAL_CHARACTER_ASCII);
             sizeUsed ++;
-            ret.append((char) '|');
+            double x = Math.random()*10;
+        	if(x>7)
+        		ret.append((char) '|');
             rnd = 0;
             do {
                  rnd = rand.nextDouble() * totalWeight;
