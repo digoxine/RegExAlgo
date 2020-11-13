@@ -1052,7 +1052,7 @@ class RechercheAutomataSansRetenue{
 	public int pref;
 	public ArrayList<String> apparaitions;
 	
-	public RechercheAutomata(Automata automata, String filename) {
+	public RechercheAutomataSansRetenue(Automata automata, String filename) {
 		this.automata = automata.getRacine();
 		RetenueAutomata ret = (new RetenueAutomata(this.automata));
 		this.apparaitions = new ArrayList<String>();
