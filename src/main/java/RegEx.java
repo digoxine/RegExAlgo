@@ -367,7 +367,9 @@ class RegExTree {
 }
 
 
-//Classe representant les noeuds d'un automate non deterministe
+/*
+ * Classe representant un noeud d'automate non deterministe
+ */
 class AutomataNodeND {
 	
 	public int id;
@@ -412,7 +414,9 @@ class AutomataNodeND {
 	}
 }
 
-//Classe representant le noeud d'un automate deterministe
+/*
+ * Classe representant un noeud d'automate deterministe
+ */
 class AutomataNodeD{
 	public ArrayList<AutomataNodeD> ancetres; //repertorie les noeuds ancetres a celui ci
 	public ArrayList<AutomataNodeND> courant; //repertorie les etats du noeud courant
@@ -512,7 +516,10 @@ class AutomataNodeD{
 	}
 }
 
-
+/*
+ * Classe permettant de generer un automate non deterministe puis 
+ * de le convertir en automate deterministe avant de l'optimiser
+ */
 class Automata 
 {
 	private static final int ID_EPSILON_TRANSITION = -1;
@@ -585,7 +592,9 @@ class Automata
     	return chaine+toStringRec(start_node, deja);
     }
 
-
+    /*
+     * Fonction convertissant l'arbre d'une expression regex en un automate non deterministe
+     */
     private void toAutomata(RegExTree tree, AutomataNodeND start_node, AutomataNodeND final_node){	
     	//Cas où il s'agit d'une operation
     	
@@ -694,7 +703,9 @@ class Automata
     	}
     }
     
-    //determination de l'automate deterministe
+    /*
+     * Fonction convertissant un automate non deterministe en un automate deterministe
+     */
     public void detTab(ArrayList<AutomataNodeND> ancetres_direct, AutomataNodeD noeud, int current_link, String chemin) {
     	ArrayList<AutomataNodeND> etats_courant = new ArrayList<AutomataNodeND>();
     	int i;
@@ -771,7 +782,9 @@ class Automata
     	}
 	}
 
-	//Fonction optimisant un automate deterministe
+	/*
+	 * Fonction effectuant l'optimisation d'un automate deterministe
+	 */
 	public void optimi(){
 		merger();
 		while(boucle){
@@ -981,7 +994,10 @@ class RetenueAutomata{
 	
 }
 
-//Effectue une recherche a partir d'un automate
+/*
+ * Classe effectuant à l'aide de la retenue des neouds d'un automate, la recherche
+ * du regex qu'il represente dans le texte.
+ */
 class RechercheAutomata{
 	public AutomataNodeD automata;
 	public int nombre;
@@ -995,6 +1011,10 @@ class RechercheAutomata{
 		this.pref = ret.getPrefixe().length();
 		Rechercher(filename);
 	}
+	
+	/*
+	 * Fonction effectuant la recherche d'un automate dans un fichier filename
+	 */
 	
 	private void Rechercher(String filename) {
 		AutomataNodeD courant;
@@ -1052,7 +1072,10 @@ class RechercheAutomata{
 
 }
 
-//Effectue une recherche a partir d'un automate sans retenue
+/*
+ * Classe permettant d'effectuer la recherche d'un regex representé par un automate
+ * dans un texte sans l'usage de la retenue des noeuds de l'automate.
+ */
 class RechercheAutomataSansRetenue{
 	public AutomataNodeD automata;
 	public int nombre;
@@ -1121,6 +1144,10 @@ class RechercheAutomataSansRetenue{
 	
 
 }
+
+/*
+ * Classe permettant d'effectuer un recherche sur un facteur simple
+ */
 
 class Recherche{
 	public String text;
