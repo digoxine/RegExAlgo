@@ -71,7 +71,7 @@ public class RegEx {
             RegExTree ret = parse();
             Automata a = new Automata(ret);
             long t2 = System.currentTimeMillis();
-            RechercheAutomata recaut = new RechercheAutomata(a,filename);
+            RechercheAutomataSansRetenue recaut = new RechercheAutomataSansRetenue(a,filename);
             long t3 = System.currentTimeMillis();
             System.out.println("On a "+recaut.getNombre()+" apparations du regex "+regEx + " dans le texte "+filename+".");
 
