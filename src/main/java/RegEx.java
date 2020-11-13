@@ -92,7 +92,8 @@ public class RegEx {
 
         String filename;
         long start_search, end_search;
-        for(int k=10000; k < 10000000; k+=10000) {//create file of random string
+        long start2_search, end_search2;
+        for(int k=10000; k < 1000000; k+=10000) {//create file of random string
             filename = "resources/generated_texts/text_generated_" + k + ".txt";
             RegExStringGenerator.generateFileText(k, filename);//creating file with random letters good distrib
             PrintWriter out = new PrintWriter(
@@ -100,7 +101,7 @@ public class RegEx {
                             new FileWriter(resultfile, true)
                     )
             );
-            for (int lgRegEx = 5; lgRegEx < 6; lgRegEx++) {
+            for (int lgRegEx = 20; lgRegEx < 21; lgRegEx++) {
                 regEx = RegExStringGenerator.generateRegEx(lgRegEx);
                 if (regEx.length() < 1) {
                     System.err.println("  >> ERROR: empty regEx.");
@@ -108,12 +109,18 @@ public class RegEx {
                     System.out.println(lgRegEx);
                     System.out.println(regEx);
                     System.out.println(k);
-                    start_search = System.currentTimeMillis();
+
                     RegExTree ret = parse();
                     Automata a = new Automata(ret);
+                    start_search = System.currentTimeMillis();
                     new RechercheAutomata(a, filename);
                     end_search = System.currentTimeMillis();
-                    out.println(k + " " + regEx + " " + lgRegEx + " " + (end_search - start_search));
+                    start2_search = System.currentTimeMillis();
+                    //RegExTree ret2 = parse();
+                    //Automata a2 = new Automata(ret2);
+                    new RechercheAutomataSansRetenue(a, filename);
+                    end_search2 = System.currentTimeMillis();
+                    out.println(k + " " + regEx + " " + lgRegEx + " " + (end_search - start_search) + " " + (end_search2-start2_search));
 
                 }
             }
