@@ -598,7 +598,12 @@ class Automata
     private void toAutomata(RegExTree tree, AutomataNodeND start_node, AutomataNodeND final_node){	
     	//Cas où il s'agit d'une operation
     	
-    	if (tree.getRoot()==RegEx.CONCAT || tree.getRoot()==RegEx.DOT) {
+    	if(tree.getRoot()==RegEx.DOT) {
+    		start_node.addTransition(-2,final_node);
+    		if(!this.transitions_c.contains(-2))
+    			this.transitions_c.add(-2);
+    	}
+    	else if (tree.getRoot()==RegEx.CONCAT) {
     		AutomataNodeND node1 = new AutomataNodeND(id_node);
     		id_node++;
     		
@@ -981,11 +986,13 @@ class RetenueAutomata{
 			 }
 			 node.setRetenue(l+1);
 		 }
-		 if(node.getLinks().keySet().size()>1) {
+		 if(node.getLinks().keySet().size()>1 ) {
 			 for(int a : node.getLinks().keySet()) {
 				 setRetenue(node.getLink(a),""+((char)a));
 			 }
-		 } else if(node.getLinks().keySet().size()==1) {
+		 } else if (node.getLinks().containsKey(-2)) { 
+			 setRetenue(node.getLink(-2),"");
+		 }else if(node.getLinks().keySet().size()==1) {
 			 for(int a : node.getLinks().keySet()) {
 				 setRetenue(node.getLink(a),retenue+((char)a));
 			 }
@@ -1033,11 +1040,16 @@ class RechercheAutomata{
 				i=0;
 				while(!courant.isAcceptance()){
 					
-					if(((t+i)==line.length())||(!courant.getLinks().containsKey((int)line.charAt(i+t)))) {
+					if(((t+i)==line.length())||((!courant.getLinks().containsKey((int)line.charAt(i+t)))&&(!courant.getLinks().containsKey(-2)))) {
 						t += courant.getRetenue()-1;
 						break;
 					}
-					courant = courant.getLink((int)line.charAt(i+t));
+					if(courant.getLink((int)line.charAt(i+t))==null) {
+						courant = courant.getLink(-2);
+					}
+					else {
+						courant = courant.getLink((int)line.charAt(i+t));
+					}
 					i++;
 				}
 				if(courant.isAcceptance()) {
@@ -1107,10 +1119,15 @@ class RechercheAutomataSansRetenue{
 				i=0;
 				while(!courant.isAcceptance()){
 					
-					if(((t+i)==line.length())||(!courant.getLinks().containsKey((int)line.charAt(i+t)))) {
+					if(((t+i)==line.length())||((!courant.getLinks().containsKey((int)line.charAt(i+t)))&&(!courant.getLinks().containsKey(-2))))  {
 						break;
 					}
-					courant = courant.getLink((int)line.charAt(i+t));
+					if(courant.getLink((int)line.charAt(i+t))==null) {
+						courant = courant.getLink(-2);
+					}
+					else {
+						courant = courant.getLink((int)line.charAt(i+t));
+					}
 					i++;
 				}
 				if(courant.isAcceptance()) {
@@ -1120,7 +1137,7 @@ class RechercheAutomataSansRetenue{
 				t++;
 			}
 		  myReader.close();
-	    } catch (FileNotFoundException e) {
+	    } catch (Exception e) {
 	      System.out.println("An error occurred.");
 	      e.printStackTrace();
 	    }
