@@ -1054,7 +1054,9 @@ class RechercheAutomata{
 				}
 				if(courant.isAcceptance()) {
 					nombre++;
-					apparaitions.add(line);
+					//il est necessaire d'ajouter une ligne du texte qu'un seule fois
+					if(!apparaitions.contains(line))
+						apparaitions.add(line);
 				}
 				t++;
 			}
@@ -1132,7 +1134,9 @@ class RechercheAutomataSansRetenue{
 				}
 				if(courant.isAcceptance()) {
 					nombre++;
-					apparaitions.add(line);
+					//il est necessaire d'ajouter une ligne du texte qu'un seule fois
+					if(!apparaitions.contains(line))
+						apparaitions.add(line);
 				}
 				t++;
 			}
