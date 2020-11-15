@@ -98,7 +98,7 @@ public class RegEx {
         }
         long start_search, end_search;
         long start2_search, end_search2;
-        for(int k=10000; k < 2700000; k+=10000) {//create file of random string
+        for(int k=10000; k < 1000000; k+=10000) {//create file of random string
             filename = "resources/generated_texts/text_generated_" + k + ".txt";
             RegExStringGenerator.generateFileText(k, filename);//creating file with random letters good distrib
             PrintWriter out = new PrintWriter(

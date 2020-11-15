@@ -155,7 +155,9 @@ public class RegExStringGenerator {
         {
             f.delete();
         }
+
         double rnd;
+        boolean space = false;
         PrintWriter out = null;
         try {
             out = new PrintWriter(
@@ -168,13 +170,15 @@ public class RegExStringGenerator {
                 {
                     out.println();
                 }
-                if(x>8)
+                if(x>8 && !space)
                 {
                     out.print(' ');
+                    space=true;
                     continue;
                 }
                 rnd = rand.nextDouble() ;
                 out.print(map.ceilingEntry(rnd).getValue());
+                space=false;
             }
         } catch (Exception e)
         {
