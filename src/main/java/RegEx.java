@@ -107,8 +107,8 @@ public class RegEx {
                     )
             );
             for (int lgRegEx = 20; lgRegEx < 21; lgRegEx++) {
-                //regEx = RegExStringGenerator.generateWord(lgRegEx);
-                regEx = RegExStringGenerator.generateRegEx(lgRegEx);
+                regEx = RegExStringGenerator.generateWord(lgRegEx);
+                //regEx = RegExStringGenerator.generateRegEx(lgRegEx);
                 if (regEx.length() < 1) {
                     System.err.println("  >> ERROR: empty regEx.");
                 } else {

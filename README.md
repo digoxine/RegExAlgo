@@ -2,6 +2,7 @@
 Developed by : 
 Keita Lamine
 Memmi Sacha
+Run file RegEx.java with parameter 0 or 1
 
 Two modes of execution:
     
