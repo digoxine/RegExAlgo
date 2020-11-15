@@ -1,8 +1,11 @@
 package utils;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -140,8 +143,18 @@ public class RegExStringGenerator {
         return ret.toString();
     }
 
+    /**
+     * Create text file with random string (frequencies of english language)
+     * @param lengthText        length of text
+     * @param fileName          name of file
+     */
     public static void generateFileText(int lengthText, String fileName)
     {
+        File f = new File(fileName);
+        if(f.exists())
+        {
+            f.delete();
+        }
         double rnd;
         PrintWriter out = null;
         try {
@@ -150,6 +163,16 @@ public class RegExStringGenerator {
                             new FileWriter(fileName, true)));
             for(int i=0; i<lengthText; i++)
             {
+                double x = Math.random()*10;
+                if(i%50 == 0)
+                {
+                    out.println();
+                }
+                if(x>8)
+                {
+                    out.print(' ');
+                    continue;
+                }
                 rnd = rand.nextDouble() ;
                 out.print(map.ceilingEntry(rnd).getValue());
             }
@@ -161,4 +184,22 @@ public class RegExStringGenerator {
             out.close();
         }
     }
+
+    public static String generateWord(int lengthText)
+    {
+        for (int i=0; i<weights.length; i++) {
+            totalWeight += weights[i];
+            map.put(totalWeight, options[i]);
+        }
+        double rnd;
+        StringBuffer ret = new StringBuffer();
+        for(int i=0; i<lengthText; i++)
+        {
+            rnd = rand.nextDouble() * totalWeight;
+            ret.append(map.ceilingEntry(rnd).getValue());
+
+        }
+        return ret.toString();
+    }
+
 }

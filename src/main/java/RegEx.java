@@ -91,6 +91,11 @@ public class RegEx {
         String resultfile = scanner.next();
 
         String filename;
+        File f = new File(resultfile);
+        if(f.exists())
+        {
+            f.delete();
+        }
         long start_search, end_search;
         long start2_search, end_search2;
         for(int k=10000; k < 2700000; k+=10000) {//create file of random string
@@ -102,6 +107,7 @@ public class RegEx {
                     )
             );
             for (int lgRegEx = 20; lgRegEx < 21; lgRegEx++) {
+                //regEx = RegExStringGenerator.generateWord(lgRegEx);
                 regEx = RegExStringGenerator.generateRegEx(lgRegEx);
                 if (regEx.length() < 1) {
                     System.err.println("  >> ERROR: empty regEx.");
