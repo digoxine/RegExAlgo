@@ -98,7 +98,7 @@ public class RegEx {
         }
         long start_search, end_search;
         long start2_search, end_search2;
-        for(int k=10000; k < 1000000; k+=10000) {//create file of random string
+        for(int k=10000; k < 2700000; k+=10000) {//create file of random string
             filename = "resources/generated_texts/text_generated_" + k + ".txt";
             RegExStringGenerator.generateFileText(k, filename);//creating file with random letters good distrib
             PrintWriter out = new PrintWriter(
@@ -953,7 +953,7 @@ class RetenueAutomata{
 	public RetenueAutomata(AutomataNodeD automata) {
 		this.automata = automata;
 		this.prefixe = "";
-		this.setPrefixe(automata);
+		this.setPrefixe(automata, new ArrayList<AutomataNodeD>());
 		this.setRetenue(automata, "");
 	}
 	
@@ -961,13 +961,14 @@ class RetenueAutomata{
 		return this.prefixe;
 	}
 	
-	public void setPrefixe(AutomataNodeD node) {
+	public void setPrefixe(AutomataNodeD node, ArrayList<AutomataNodeD> anc) {
 		int k;
+		anc.add(node);
 		if(node.getLinks().keySet().size()==1) {
 			k = (int) node.getLinks().keySet().toArray()[0];
-			if(node.getLink(k)!=node){
+			if(!anc.contains(node.getLink(k))){
 				this.prefixe += ((char)k);
-				setPrefixe(node.getLink(k));
+				setPrefixe(node.getLink(k),anc);
 			}
 		}
 	}
